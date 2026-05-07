@@ -1,0 +1,300 @@
+﻿<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sorting Visualizer</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="page-wrap">
+
+  <!-- HEADER -->
+  <header>
+    <div class="eyebrow">// Struktur Data &amp; Algoritma</div>
+    <h1>
+      <span class="h1-sort">Sorting</span><br>
+      <span class="h1-viz">Visualizer</span>
+    </h1>
+    <p class="header-sub">Visualisasi interaktif tiga algoritma sorting klasik. Atur jumlah elemen, pilih kecepatan, dan saksikan prosesnya.</p>
+  </header>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab-btn active" data-algo="bubble"    onclick="switchAlgo('bubble')"><span class="tab-circle"></span>Bubble Sort</button>
+    <button class="tab-btn"        data-algo="selection" onclick="switchAlgo('selection')"><span class="tab-circle"></span>Selection Sort</button>
+    <button class="tab-btn"        data-algo="insertion" onclick="switchAlgo('insertion')"><span class="tab-circle"></span>Insertion Sort</button>
+  </div>
+
+  <!-- ═══════════ BUBBLE SORT ═══════════ -->
+  <div id="panel-bubble" class="algo-panel algo-bubble active">
+
+    <!-- SIZE BAR -->
+    <div class="size-bar">
+      <div class="size-label-group">
+        <span class="size-icon">🎚️</span>
+        <span class="size-title">Jumlah Elemen</span>
+      </div>
+      <span class="size-val-badge" id="b-size-val">20</span>
+      <div class="size-slider-wrap">
+        <input type="range" class="size-slider" id="b-size" min="5" max="80" value="20" step="1" oninput="onSizeChange('bubble',this.value)">
+        <div class="size-ticks"><span>5</span><span>20</span><span>40</span><span>60</span><span>80</span></div>
+      </div>
+      <button class="btn-regen" onclick="initAlgo('bubble')">⟳ &nbsp;Acak Ulang</button>
+    </div>
+
+    <div class="card">
+      <div class="algo-header">
+        <div class="algo-name-block">
+          <div class="algo-emoji">🫧</div>
+          <div class="algo-name">Bubble Sort</div>
+          <div class="algo-desc">Dua elemen bersebelahan dibandingkan &amp; ditukar jika tidak urut, berulang sampai semua naik ke posisi yang benar.</div>
+        </div>
+        <div class="stats-pills">
+          <div class="pill">Best <strong>O(n)</strong></div>
+          <div class="pill">Avg <strong>O(n²)</strong></div>
+          <div class="pill">Worst <strong>O(n²)</strong></div>
+          <div class="pill">Space <strong>O(1)</strong></div>
+          <div class="pill">Stable <strong>✓</strong></div>
+        </div>
+      </div>
+
+      <div class="counter-row">
+        <div class="counter-box"><div class="counter-num" id="b-comps">0</div><div class="counter-lbl">Perbandingan</div></div>
+        <div class="counter-box"><div class="counter-num" id="b-swaps">0</div><div class="counter-lbl">Pertukaran</div></div>
+        <div class="counter-box"><div class="counter-num" id="b-pass">0</div><div class="counter-lbl">Pass</div></div>
+      </div>
+
+      <div class="status-bar" id="b-status-bar"><span class="s-dot"></span><span id="b-status-txt">Siap — tekan ▶ untuk mulai</span></div>
+      <div class="done-banner" id="b-done">✓ Array Terurut!</div>
+      <div class="viz-area" id="b-viz"></div>
+
+      <div class="bottom-grid">
+        <div class="pseudo-block">
+          <div class="pseudo-hdr">Pseudocode</div>
+          <div class="pline" id="b-p0">for i = 0 to n-1:</div>
+          <div class="pline ind1" id="b-p1">for j = 0 to n-i-2:</div>
+          <div class="pline ind2" id="b-p2">if arr[j] &gt; arr[j+1]:</div>
+          <div class="pline ind2" id="b-p3">&nbsp;&nbsp;swap(arr[j], arr[j+1])</div>
+        </div>
+        <div class="legend-block">
+          <div class="legend-hdr">Legend</div>
+          <div class="legend-items">
+            <div class="li-row"><div class="li-swatch" style="background:var(--compare)"></div>Sedang dibandingkan</div>
+            <div class="li-row"><div class="li-swatch" style="background:var(--swap)"></div>Sedang ditukar</div>
+            <div class="li-row"><div class="li-swatch" style="background:var(--sorted)"></div>Sudah terurut</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="controls">
+        <button class="btn btn-run" id="b-play" onclick="algoPlay('bubble')">▶ &nbsp;Mulai</button>
+        <button class="btn btn-ghost" id="b-step" onclick="algoStep('bubble')">Step →</button>
+        <button class="btn btn-ghost" onclick="initAlgo('bubble')">↺ &nbsp;Reset</button>
+        <div class="speed-wrap">
+          <span class="speed-lbl">Speed</span>
+          <input type="range" class="speed-range" id="b-speed" min="30" max="900" value="380" step="20">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ SELECTION SORT ═══════════ -->
+  <div id="panel-selection" class="algo-panel algo-selection">
+
+    <div class="size-bar">
+      <div class="size-label-group">
+        <span class="size-icon">🎚️</span>
+        <span class="size-title">Jumlah Elemen</span>
+      </div>
+      <span class="size-val-badge" id="s-size-val">20</span>
+      <div class="size-slider-wrap">
+        <input type="range" class="size-slider" id="s-size" min="5" max="80" value="20" step="1" oninput="onSizeChange('selection',this.value)">
+        <div class="size-ticks"><span>5</span><span>20</span><span>40</span><span>60</span><span>80</span></div>
+      </div>
+      <button class="btn-regen" onclick="initAlgo('selection')">⟳ &nbsp;Acak Ulang</button>
+    </div>
+
+    <div class="card">
+      <div class="algo-header">
+        <div class="algo-name-block">
+          <div class="algo-emoji">🛒</div>
+          <div class="algo-name">Selection Sort</div>
+          <div class="algo-desc">Setiap putaran, mencari nilai terkecil dari sisa array lalu memindahkannya ke posisi yang tepat di depan.</div>
+        </div>
+        <div class="stats-pills">
+          <div class="pill">Best <strong>O(n²)</strong></div>
+          <div class="pill">Avg <strong>O(n²)</strong></div>
+          <div class="pill">Worst <strong>O(n²)</strong></div>
+          <div class="pill">Space <strong>O(1)</strong></div>
+          <div class="pill">Stable <strong>✗</strong></div>
+        </div>
+      </div>
+
+      <div class="counter-row">
+        <div class="counter-box"><div class="counter-num" id="s-comps">0</div><div class="counter-lbl">Perbandingan</div></div>
+        <div class="counter-box"><div class="counter-num" id="s-swaps">0</div><div class="counter-lbl">Pertukaran</div></div>
+        <div class="counter-box"><div class="counter-num" id="s-pass">0</div><div class="counter-lbl">Pass</div></div>
+      </div>
+
+      <div class="status-bar" id="s-status-bar"><span class="s-dot"></span><span id="s-status-txt">Siap — tekan ▶ untuk mulai</span></div>
+      <div class="done-banner" id="s-done">✓ Array Terurut!</div>
+      <div class="viz-area" id="s-viz"></div>
+
+      <div class="bottom-grid">
+        <div class="pseudo-block">
+          <div class="pseudo-hdr">Pseudocode</div>
+          <div class="pline" id="s-p0">for i = 0 to n-1:</div>
+          <div class="pline ind1" id="s-p1">minIdx = i</div>
+          <div class="pline ind1" id="s-p2">for j = i+1 to n:</div>
+          <div class="pline ind2" id="s-p3">if arr[j] &lt; arr[minIdx]:</div>
+          <div class="pline ind2" id="s-p4">&nbsp;&nbsp;minIdx = j</div>
+          <div class="pline ind1" id="s-p5">swap(arr[i], arr[minIdx])</div>
+        </div>
+        <div class="legend-block">
+          <div class="legend-hdr">Legend</div>
+          <div class="legend-items">
+            <div class="li-row"><div class="li-swatch" style="background:var(--selection)"></div>Minimum saat ini</div>
+            <div class="li-row"><div class="li-swatch" style="background:var(--compare)"></div>Sedang dibandingkan</div>
+            <div class="li-row"><div class="li-swatch" style="background:var(--swap)"></div>Sedang ditukar</div>
+            <div class="li-row"><div class="li-swatch" style="background:var(--sorted)"></div>Sudah terurut</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="controls">
+        <button class="btn btn-run" id="s-play" onclick="algoPlay('selection')">▶ &nbsp;Mulai</button>
+        <button class="btn btn-ghost" id="s-step" onclick="algoStep('selection')">Step →</button>
+        <button class="btn btn-ghost" onclick="initAlgo('selection')">↺ &nbsp;Reset</button>
+        <div class="speed-wrap">
+          <span class="speed-lbl">Speed</span>
+          <input type="range" class="speed-range" id="s-speed" min="30" max="900" value="380" step="20">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ INSERTION SORT ═══════════ -->
+  <div id="panel-insertion" class="algo-panel algo-insertion">
+
+    <div class="size-bar">
+      <div class="size-label-group">
+        <span class="size-icon">🎚️</span>
+        <span class="size-title">Jumlah Elemen</span>
+      </div>
+      <span class="size-val-badge" id="i-size-val">20</span>
+      <div class="size-slider-wrap">
+        <input type="range" class="size-slider" id="i-size" min="5" max="80" value="20" step="1" oninput="onSizeChange('insertion',this.value)">
+        <div class="size-ticks"><span>5</span><span>20</span><span>40</span><span>60</span><span>80</span></div>
+      </div>
+      <button class="btn-regen" onclick="initAlgo('insertion')">⟳ &nbsp;Acak Ulang</button>
+    </div>
+
+    <div class="card">
+      <div class="algo-header">
+        <div class="algo-name-block">
+          <div class="algo-emoji">🃏</div>
+          <div class="algo-name">Insertion Sort</div>
+          <div class="algo-desc">Seperti mengurutkan kartu di tangan — setiap elemen baru "disisipkan" ke posisi yang tepat di antara elemen-elemen yang sudah terurut.</div>
+        </div>
+        <div class="stats-pills">
+          <div class="pill">Best <strong>O(n)</strong></div>
+          <div class="pill">Avg <strong>O(n²)</strong></div>
+          <div class="pill">Worst <strong>O(n²)</strong></div>
+          <div class="pill">Space <strong>O(1)</strong></div>
+          <div class="pill">Stable <strong>✓</strong></div>
+        </div>
+      </div>
+
+      <div class="counter-row">
+        <div class="counter-box"><div class="counter-num" id="i-comps">0</div><div class="counter-lbl">Perbandingan</div></div>
+        <div class="counter-box"><div class="counter-num" id="i-swaps">0</div><div class="counter-lbl">Pergeseran</div></div>
+        <div class="counter-box"><div class="counter-num" id="i-pass">0</div><div class="counter-lbl">Pass</div></div>
+      </div>
+
+      <div class="status-bar" id="i-status-bar"><span class="s-dot"></span><span id="i-status-txt">Siap — tekan ▶ untuk mulai</span></div>
+      <div class="done-banner" id="i-done">✓ Array Terurut!</div>
+      <div class="viz-area" id="i-viz"></div>
+
+      <div class="bottom-grid">
+        <div class="pseudo-block">
+          <div class="pseudo-hdr">Pseudocode</div>
+          <div class="pline" id="i-p0">for i = 1 to n-1:</div>
+          <div class="pline ind1" id="i-p1">key = arr[i]</div>
+          <div class="pline ind1" id="i-p2">j = i - 1</div>
+          <div class="pline ind1" id="i-p3">while j &gt;= 0 and arr[j] &gt; key:</div>
+          <div class="pline ind2" id="i-p4">arr[j+1] = arr[j]</div>
+          <div class="pline ind2" id="i-p5">j--</div>
+          <div class="pline ind1" id="i-p6">arr[j+1] = key</div>
+        </div>
+        <div class="legend-block">
+          <div class="legend-hdr">Legend</div>
+          <div class="legend-items">
+            <div class="li-row"><div class="li-swatch" style="background:var(--insertion)"></div>Elemen di tangan (key)</div>
+            <div class="li-row"><div class="li-swatch" style="background:var(--compare)"></div>Sedang dibandingkan</div>
+            <div class="li-row"><div class="li-swatch" style="background:var(--swap)"></div>Sedang digeser</div>
+            <div class="li-row"><div class="li-swatch" style="background:var(--sorted)"></div>Sudah terurut</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="controls">
+        <button class="btn btn-run" id="i-play" onclick="algoPlay('insertion')">▶ &nbsp;Mulai</button>
+        <button class="btn btn-ghost" id="i-step" onclick="algoStep('insertion')">Step →</button>
+        <button class="btn btn-ghost" onclick="initAlgo('insertion')">↺ &nbsp;Reset</button>
+        <div class="speed-wrap">
+          <span class="speed-lbl">Speed</span>
+          <input type="range" class="speed-range" id="i-speed" min="30" max="900" value="380" step="20">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ai-panel">
+    <div class="card">
+      <div class="algo-header">
+        <div class="algo-name-block">
+          <div class="algo-emoji">🤖</div>
+          <div class="algo-name" id="ai-name">AI Assistant</div>
+          <div class="algo-desc">Tanya tentang algoritma, web, atau minta ringkasan dari web (jika server lokal aktif).</div>
+        </div>
+        <div class="stats-pills">
+          <div class="pill">Local <strong>✓</strong></div>
+          <div class="pill" id="ai-server-pill">Server: <strong>Offline</strong></div>
+          <div class="pill">Cepat <strong>✓</strong></div>
+        </div>
+      </div>
+
+      <div class="ai-body">
+        <div class="ai-chat" id="ai-chat"></div>
+
+        <div class="ai-settings">
+          <p class="ai-note"><strong>Local LM:</strong> jawaban dibuat sepenuhnya oleh mesin lokal yang berjalan di browser / komputer Anda. Jika ingin mencari jawaban online, jalankan server lokal dan aktifkan opsi di bawah.</p>
+          <label class="ai-toggle-label"><input type="checkbox" id="ai-verbose"> Tampilkan proses berpikir (verbose)</label>
+          <label class="ai-toggle-label"><input type="checkbox" id="ai-use-server"> Gunakan server lokal (http://localhost:5000)</label>
+        </div>
+
+        <div class="ai-controls">
+          <textarea id="ai-input" class="ai-input" rows="3" placeholder="Tanya tentang apa saja: algoritma, web dev, komputer, AI, atau topik teknis lain..." aria-label="Pertanyaan AI"></textarea>
+          <div class="ai-actions">
+            <button class="btn btn-run" id="ai-send" onclick="askAi()">💬 Kirim</button>
+            <button class="btn btn-ghost" onclick="clearAiChat()">🗑️ Kosongkan</button>
+          </div>
+        </div>
+
+        <div class="ai-quick">
+          <button class="btn btn-ghost" onclick="aiQuick('Apa perbedaan Bubble Sort dan Selection Sort?')">Perbedaan</button>
+          <button class="btn btn-ghost" onclick="aiQuick('Kapan Insertion Sort lebih cepat?')">Kapan Insertion?</button>
+          <button class="btn btn-ghost" onclick="aiQuick('Jelaskan kompleksitas Bubble Sort')">Kompleksitas</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /page-wrap -->
+
+<script src="script.js" defer></script>
+</body>
+</html>
+
