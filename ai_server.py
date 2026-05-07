@@ -20,9 +20,14 @@ try:
 except Exception as e:
     LocalAI = None
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='.', static_url_path='')
 # Permissive CORS for local development (allow '*' and null origins)
 CORS(app, resources={r"/*": {"origins": "*"}}, send_wildcard=True)
+
+
+@app.route('/')
+def index():
+    return app.send_static_file('index.html')
 
 
 @app.after_request

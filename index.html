@@ -13,6 +13,9 @@
   <!-- HEADER -->
   <header>
     <div class="eyebrow">// Struktur Data &amp; Algoritma</div>
+    <div class="header-actions">
+      <button class="btn-ai-quick" onclick="scrollToAi()">🤖 AI Assistant</button>
+    </div>
     <h1>
       <span class="h1-sort">Sorting</span><br>
       <span class="h1-viz">Visualizer</span>
@@ -25,6 +28,7 @@
     <button class="tab-btn active" data-algo="bubble"    onclick="switchAlgo('bubble')"><span class="tab-circle"></span>Bubble Sort</button>
     <button class="tab-btn"        data-algo="selection" onclick="switchAlgo('selection')"><span class="tab-circle"></span>Selection Sort</button>
     <button class="tab-btn"        data-algo="insertion" onclick="switchAlgo('insertion')"><span class="tab-circle"></span>Insertion Sort</button>
+    <button class="tab-btn"        data-algo="binary"    onclick="switchAlgo('binary')"><span class="tab-circle"></span>Binary Search</button>
   </div>
 
   <!-- ═══════════ BUBBLE SORT ═══════════ -->
@@ -251,6 +255,85 @@
     </div>
   </div>
 
+  <!-- ═══════════ BINARY SEARCH ═══════════ -->
+  <div id="panel-binary" class="algo-panel algo-binary">
+
+    <div class="size-bar">
+      <div class="size-label-group">
+        <span class="size-icon">🎚️</span>
+        <span class="size-title">Jumlah Elemen</span>
+      </div>
+      <span class="size-val-badge" id="bs-size-val">20</span>
+      <div class="size-slider-wrap">
+        <input type="range" class="size-slider" id="bs-size" min="5" max="80" value="20" step="1" oninput="onSizeChange('binary',this.value)">
+        <div class="size-ticks"><span>5</span><span>20</span><span>40</span><span>60</span><span>80</span></div>
+      </div>
+      <button class="btn-regen" onclick="initAlgo('binary')">⟳ &nbsp;Acak Ulang</button>
+    </div>
+
+    <div class="card">
+      <div class="algo-header">
+        <div class="algo-name-block">
+          <div class="algo-emoji">🔍</div>
+          <div class="algo-name">Binary Search</div>
+          <div class="algo-desc">Cari elemen dalam array terurut dengan membagi pencarian area setengahnya di setiap langkah.</div>
+        </div>
+        <div class="stats-pills">
+          <div class="pill">Best <strong>O(1)</strong></div>
+          <div class="pill">Avg <strong>O(log n)</strong></div>
+          <div class="pill">Worst <strong>O(log n)</strong></div>
+          <div class="pill">Space <strong>O(1)</strong></div>
+          <div class="pill">Kebutuhan <strong>Sorted</strong></div>
+        </div>
+      </div>
+
+      <div class="counter-row">
+        <div class="counter-box"><div class="counter-num" id="bs-comps">0</div><div class="counter-lbl">Perbandingan</div></div>
+        <div class="counter-box"><div class="counter-num" id="bs-pass">0</div><div class="counter-lbl">Iterasi</div></div>
+        <div class="counter-box"><div class="counter-num" id="bs-target">-</div><div class="counter-lbl">Target Cari</div></div>
+      </div>
+
+      <div class="status-bar" id="bs-status-bar"><span class="s-dot"></span><span id="bs-status-txt">Siap — tekan ▶ untuk mulai</span></div>
+      <div class="done-banner" id="bs-done">✓ Elemen Ditemukan!</div>
+      <div class="viz-area" id="bs-viz"></div>
+
+      <div class="bottom-grid">
+        <div class="pseudo-block">
+          <div class="pseudo-hdr">Pseudocode</div>
+          <div class="pline" id="bs-p0">left = 0, right = n-1</div>
+          <div class="pline ind1" id="bs-p1">while left &lt;= right:</div>
+          <div class="pline ind2" id="bs-p2">mid = (left + right) / 2</div>
+          <div class="pline ind2" id="bs-p3">if arr[mid] == target:</div>
+          <div class="pline ind2" id="bs-p4">&nbsp;&nbsp;return mid</div>
+          <div class="pline ind2" id="bs-p5">else if arr[mid] &lt; target:</div>
+          <div class="pline ind2" id="bs-p6">&nbsp;&nbsp;left = mid + 1</div>
+          <div class="pline ind2" id="bs-p7">else: right = mid - 1</div>
+        </div>
+        <div class="legend-block">
+          <div class="legend-hdr">Legend</div>
+          <div class="legend-items">
+            <div class="li-row"><div class="li-swatch" style="background:var(--compare)"></div>Mid (sedang cek)</div>
+            <div class="li-row"><div class="li-swatch" style="background:var(--selection)"></div>Search area</div>
+            <div class="li-row"><div class="li-swatch" style="background:var(--insertion)"></div>Target ditemukan</div>
+            <div class="li-row"><div class="li-swatch" style="background:var(--sorted)"></div>Area dihapus</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="controls">
+        <button class="btn btn-run" id="bs-play" onclick="algoPlay('binary')">▶ &nbsp;Mulai</button>
+        <button class="btn btn-ghost" id="bs-step" onclick="algoStep('binary')">Step →</button>
+        <button class="btn btn-ghost" onclick="initAlgo('binary')">↺ &nbsp;Reset</button>
+        <div class="speed-wrap">
+          <span class="speed-lbl">Speed</span>
+          <input type="range" class="speed-range" id="bs-speed" min="30" max="900" value="380" step="20">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ AI AGENT SECTION ═══════════ -->
+  <div class="ai-section">
   <div class="ai-panel">
     <div class="card">
       <div class="algo-header">
@@ -273,10 +356,8 @@
           <p class="ai-note"><strong>Local LM:</strong> jawaban dibuat sepenuhnya oleh mesin lokal yang berjalan di browser / komputer Anda. Jika ingin mencari jawaban online, jalankan server lokal dan aktifkan opsi di bawah.</p>
           <label class="ai-toggle-label"><input type="checkbox" id="ai-verbose"> Tampilkan proses berpikir (verbose)</label>
           <label class="ai-toggle-label"><input type="checkbox" id="ai-use-server"> Gunakan server lokal (http://localhost:5000)</label>
-        </div>
-
-        <div class="ai-controls">
-          <textarea id="ai-input" class="ai-input" rows="3" placeholder="Tanya tentang apa saja: algoritma, web dev, komputer, AI, atau topik teknis lain..." aria-label="Pertanyaan AI"></textarea>
+        <p class="ai-help"><strong>Perlu menghidupkan server?</strong> <a href="https://wa.me/081395441721?text=Halo%2C%20saya%20ingin%20menghidupkan%20server%20AI" target="_blank" class="wa-link">💬 Hubungi via WhatsApp</a></p>
+          <textarea id="ai-input" rows="3" placeholder="Tanya tentang apa saja: algoritma, web dev, komputer, AI, atau topik teknis lain..." style="width:100%;padding:10px;border-radius:8px;background:var(--bg2);color:var(--fg);border:1px solid var(--border);font-family:inherit;font-size:0.95rem;resize:vertical;margin-bottom:8px;"></textarea>
           <div class="ai-actions">
             <button class="btn btn-run" id="ai-send" onclick="askAi()">💬 Kirim</button>
             <button class="btn btn-ghost" onclick="clearAiChat()">🗑️ Kosongkan</button>
@@ -291,6 +372,7 @@
       </div>
     </div>
   </div>
+  </div><!-- /ai-section -->
 
 </div><!-- /page-wrap -->
 

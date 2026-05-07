@@ -22,6 +22,10 @@
   --insertion-dim: rgba(176, 110, 255, 0.08);
   --insertion-glow: rgba(176, 110, 255, 0.25);
 
+  --binary: #00d984;
+  --binary-dim: rgba(0, 217, 132, 0.08);
+  --binary-glow: rgba(0, 217, 132, 0.25);
+
   --compare: #ffe600;
   --swap: #ff2d55;
   --sorted: #00ff88;
@@ -80,6 +84,24 @@ header {
   gap: 10px;
   margin-bottom: 48px;
 }
+
+.header-actions {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 10;
+}
+
+.btn-ai-quick {
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: rgba(0, 217, 132, 0.08);
+  color: var(--binary);
+  border: 1px solid rgba(0, 217, 132, 0.16);
+  font-weight: 700;
+  cursor: pointer;
+}
+
 
 .eyebrow {
   font-family: 'JetBrains Mono', monospace;
@@ -261,6 +283,10 @@ input[type='range'].size-slider::-webkit-slider-thumb {
   background: var(--insertion);
 }
 
+.algo-binary input[type='range'].size-slider::-webkit-slider-thumb {
+  background: var(--binary);
+}
+
 input[type='range'].size-slider::-webkit-slider-thumb:hover {
   transform: scale(1.15);
   box-shadow: 0 0 12px currentColor;
@@ -323,6 +349,10 @@ input[type='range'].size-slider::-webkit-slider-thumb:hover {
 
 .algo-insertion .card::before {
   background: linear-gradient(90deg, transparent 10%, var(--insertion) 50%, transparent 90%);
+}
+
+.algo-binary .card::before {
+  background: linear-gradient(90deg, transparent 10%, var(--binary) 50%, transparent 90%);
 }
 
 .algo-header {
@@ -408,6 +438,7 @@ input[type='range'].size-slider::-webkit-slider-thumb:hover {
 .algo-bubble .counter-num { color: var(--bubble); }
 .algo-selection .counter-num { color: var(--selection); }
 .algo-insertion .counter-num { color: var(--insertion); }
+.algo-binary .counter-num { color: var(--binary); }
 
 .status-bar {
   background: rgba(255, 255, 255, 0.04);
@@ -477,6 +508,12 @@ input[type='range'].size-slider::-webkit-slider-thumb:hover {
   border: 1px solid rgba(176, 110, 255, 0.16);
 }
 
+.algo-binary .done-banner {
+  background: rgba(0, 217, 132, 0.08);
+  color: var(--binary);
+  border: 1px solid rgba(0, 217, 132, 0.16);
+}
+
 .viz-area {
   height: 220px;
   display: flex;
@@ -501,6 +538,8 @@ input[type='range'].size-slider::-webkit-slider-thumb:hover {
 .algo-bubble .bar { background: rgba(0, 229, 255, 0.18); }
 .algo-selection .bar { background: rgba(255, 96, 64, 0.18); }
 .algo-insertion .bar { background: rgba(176, 110, 255, 0.18); }
+.algo-binary .bar { background: rgba(0, 217, 132, 0.18); }
+.bar.selection { background: var(--binary) !important; opacity: 0.45; box-shadow: 0 0 10px var(--binary-glow) !important; }
 
 .bar.compare { background: var(--compare) !important; box-shadow: 0 0 14px rgba(255, 230, 0, 0.45) !important; }
 .bar.swap { background: var(--swap) !important; box-shadow: 0 0 16px rgba(255, 45, 85, 0.45) !important; }
@@ -563,6 +602,7 @@ input[type='range'].size-slider::-webkit-slider-thumb:hover {
 .algo-bubble .pline.hi { color: var(--bubble); }
 .algo-selection .pline.hi { color: var(--selection); }
 .algo-insertion .pline.hi { color: var(--insertion); }
+.algo-binary .pline.hi { color: var(--binary); }
 
 .ind1 { padding-left: 24px; }
 .ind2 { padding-left: 42px; }
@@ -637,6 +677,12 @@ input[type='range'].size-slider::-webkit-slider-thumb:hover {
   border: 1px solid rgba(176, 110, 255, 0.25);
 }
 
+.algo-binary .btn-run {
+  background: rgba(0, 217, 132, 0.12);
+  color: var(--binary);
+  border: 1px solid rgba(0, 217, 132, 0.25);
+}
+
 .btn-run:not(:disabled):hover {
   transform: translateY(-1px);
 }
@@ -697,8 +743,14 @@ input[type='range'].speed-range::-webkit-slider-thumb:hover {
 .algo-panel { display: none; }
 .algo-panel.active { display: block; }
 
+.ai-section {
+  margin-top: 48px;
+  padding-top: 32px;
+  border-top: 1px solid var(--border);
+}
+
 .ai-panel {
-  margin-top: 32px;
+  margin-top: 0;
 }
 
 .ai-body {

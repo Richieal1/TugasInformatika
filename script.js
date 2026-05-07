@@ -1,9 +1,10 @@
-const PREFIX = { bubble: 'b', selection: 's', insertion: 'i' };
-const ALGO_KEYS = ['bubble', 'selection', 'insertion'];
+const PREFIX = { bubble: 'b', selection: 's', insertion: 'i', binary: 'bs' };
+const ALGO_KEYS = ['bubble', 'selection', 'insertion', 'binary'];
 const STATE = {
   bubble: createState(),
   selection: createState(),
-  insertion: createState()
+  insertion: createState(),
+  binary: createState()
 };
 
 function createState() {
@@ -21,6 +22,13 @@ function get(id) {
   return document.getElementById(id);
 }
 
+function scrollToAi() {
+  const aiSection = document.querySelector('.ai-section');
+  if (aiSection) {
+    aiSection.scrollIntoView({ behavior: 'smooth' });
+  }
+}
+
 function initAlgo(algo) {
   const prefix = PREFIX[algo];
   const st = STATE[algo];
@@ -31,6 +39,11 @@ function initAlgo(algo) {
 
   st.arr = Array.from({ length: st.size }, () => Math.floor(Math.random() * 92) + 6);
   st.steps = buildSteps(algo, [...st.arr]);
+
+  // For binary search, sync st.arr to the sorted array used in steps
+  if (algo === 'binary' && st.steps.length > 0) {
+    st.arr = [...st.steps[0].arr];
+  }
 
   renderBars(algo, {});
   resetCounters(algo);
@@ -52,6 +65,7 @@ function buildSteps(algo, arr) {
   if (algo === 'bubble') return buildBubble(arr);
   if (algo === 'selection') return buildSelection(arr);
   if (algo === 'insertion') return buildInsertion(arr);
+  if (algo === 'binary') return buildBinary(arr);
   return [];
 }
 
@@ -177,6 +191,76 @@ function buildInsertion(arr) {
   return steps;
 }
 
+function buildBinary(arr) {
+  const steps = [];
+  const n = arr.length;
+
+  // Snapshot helper
+  const snap = (a, hl, pseudo, status, done = false, target = null) => {
+    steps.push({ arr: [...a], hl, comps: 0, swaps: 0, pass: 0, pseudo, status, sorted: [], done, target });
+  };
+
+  // Step 1: tampilkan array acak dulu (1 frame)
+  snap(arr, {}, 'bs-p0', 'Array acak — langsung diurutkan untuk Binary Search...');
+
+  // Step 2: sort array, tampilkan hasil terurut (1 frame)
+  const sorted = [...arr].sort((a, b) => a - b);
+  const allIdx = new Set(sorted.map((_, i) => i));
+  steps.push({ arr: [...sorted], hl: {}, comps: 0, swaps: 0, pass: 0, pseudo: 'bs-p0', status: '✓ Array terurut! Memulai Binary Search...', sorted: [...allIdx], done: false, target: null });
+
+  // Step 3: Binary Search
+  const target = sorted[Math.floor(Math.random() * n)];
+  let comps = 0;
+  let pass = 0;
+
+  const snapBS = (hl, pseudo, status, done = false) => {
+    steps.push({ arr: [...sorted], hl, comps, swaps: 0, pass, pseudo, status, sorted: [], done, target });
+  };
+
+  snapBS({}, 'bs-p0', `Binary Search dimulai — cari target: ${target}`);
+
+  let left = 0, right = n - 1;
+  let found = false;
+  let foundIdx = -1;
+
+  while (left <= right) {
+    pass++;
+    const mid = Math.floor((left + right) / 2);
+    comps++;
+
+    const hl = {};
+    for (let i = left; i <= right; i++) hl[i] = 'selection';
+    hl[mid] = 'compare';
+    snapBS(hl, 'bs-p2', `Pass ${pass}: mid=${mid}, arr[mid]=${sorted[mid]}, target=${target}`);
+
+    if (sorted[mid] === target) {
+      found = true;
+      foundIdx = mid;
+      const hlFound = {};
+      for (let i = left; i <= right; i++) hlFound[i] = 'selection';
+      hlFound[mid] = 'insertion';
+      snapBS(hlFound, 'bs-p4', `✓ Target ${target} ditemukan di index ${mid}!`);
+      break;
+    } else if (sorted[mid] < target) {
+      comps++;
+      snapBS({ [mid]: 'compare' }, 'bs-p5', `arr[${mid}]=${sorted[mid]} < ${target} → buang kiri, cari kanan`);
+      left = mid + 1;
+    } else {
+      comps++;
+      snapBS({ [mid]: 'compare' }, 'bs-p7', `arr[${mid}]=${sorted[mid]} > ${target} → buang kanan, cari kiri`);
+      right = mid - 1;
+    }
+  }
+
+  if (found) {
+    snapBS({ [foundIdx]: 'insertion' }, '', `✓ Selesai! Target ${target} di index ${foundIdx}. Perbandingan: ${comps}`, true);
+  } else {
+    snapBS({}, '', `✗ Target ${target} tidak ditemukan. Perbandingan: ${comps}`, true);
+  }
+
+  return steps;
+}
+
 function renderBars(algo, highlights = {}) {
   const prefix = PREFIX[algo];
   const st = STATE[algo];
@@ -215,7 +299,12 @@ function applyStep(algo, step) {
   renderBars(algo, { ...step.hl, sorted: step.sorted });
 
   get(prefix + '-comps').textContent = step.comps;
-  get(prefix + '-swaps').textContent = step.swaps;
+  if (algo !== 'binary') {
+    get(prefix + '-swaps').textContent = step.swaps;
+  } else if (step.target) {
+    const targetEl = get(prefix + '-target');
+    if (targetEl) targetEl.textContent = step.target;
+  }
   get(prefix + '-pass').textContent = step.pass;
 
   setStatus(algo, step.status, !step.done);
@@ -241,9 +330,15 @@ function setStatus(algo, text, running) {
 
 function resetCounters(algo) {
   const prefix = PREFIX[algo];
-  ['comps', 'swaps', 'pass'].forEach(key => {
-    get(prefix + '-' + key).textContent = '0';
-  });
+  if (algo === 'binary') {
+    get(prefix + '-comps').textContent = '0';
+    get(prefix + '-pass').textContent = '0';
+    get(prefix + '-target').textContent = '-';
+  } else {
+    ['comps', 'swaps', 'pass'].forEach(key => {
+      get(prefix + '-' + key).textContent = '0';
+    });
+  }
 }
 
 function clearPseudo(algo) {
@@ -630,9 +725,9 @@ async function askAi() {
     appendAiMessage('ai', 'Memproses (server)...');
     try {
       const verbose = get('ai-verbose') ? !!get('ai-verbose').checked : false;
-      const res = await fetch('http://localhost:5000/api/ask', {
+      const res = await fetch('/api/ask', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'ngrok-skip-browser-warning': '1' },
         body: JSON.stringify({ question: input, verbose })
       });
       if (!res.ok) throw new Error(res.status + ' ' + res.statusText);
@@ -679,7 +774,7 @@ async function checkAiServer() {
   const pill = get('ai-server-pill');
   if (!pill) return;
   try {
-      const res = await fetch('http://localhost:5000/api/health', { method: 'GET', cache: 'no-store' });
+      const res = await fetch('/api/health', { method: 'GET', cache: 'no-store', headers: { 'ngrok-skip-browser-warning': '1' } });
     if (res.ok) {
       pill.innerHTML = 'Server: <strong style="color:var(--bubble)">Online</strong>';
     } else {
